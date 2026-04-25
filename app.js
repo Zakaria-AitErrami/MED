@@ -1,32 +1,446 @@
 const STORAGE_KEY = "mici-suivi-state-v1";
 const SESSION_KEY = "mici-suivi-session-v1";
+const LANG_KEY = "mici-suivi-language-v1";
 const PAGE_SIZE = 5;
 
 const appConfig = loadAppConfig();
+const I18N = {
+  fr: {
+    "app.title": "MICI TRACK - Suivi des patients",
+    "brand.authSubtitle": "Connexion MICI TRACK",
+    "brand.clinicalPlatform": "Plateforme clinique",
+    "home.eyebrow": "Smart Patient Monitoring",
+    "home.heroTitle": "Smart Patient Monitoring",
+    "home.lede": "Suivez les patients au quotidien, détectez les risques plus tôt et donnez aux médecins une vue claire en temps réel de chaque cas.",
+    "home.doctorAccess": "Accès médecin",
+    "home.patientAccess": "Accès patient",
+    "home.trust1": "Suivi à distance",
+    "home.trust2": "Alertes intelligentes",
+    "home.trust3": "Français / عربي",
+    "home.aboutEyebrow": "Qui sommes-nous",
+    "home.aboutTitle": "Smart Patient Monitoring",
+    "home.aboutText": "Nous sommes une équipe qui améliore le suivi patient grâce à la technologie. Notre objectif est d’aider les médecins à gagner du temps et à prendre de meilleures décisions, tout en donnant aux patients un moyen simple de suivre leur santé au quotidien.",
+    "home.featureDoctorTitle": "Pour le médecin",
+    "home.featureDoctorText": "Dashboard, score clinique, recherche, pagination, création de patient et messagerie sécurisée.",
+    "home.featurePatientTitle": "Pour le patient",
+    "home.featurePatientText": "Connexion par code, questionnaire rapide, feedback immédiat et messages du médecin.",
+    "home.featureMoroccoTitle": "Ancré au Maroc",
+    "home.featureMoroccoText": "Interface bilingue français/arabe et expérience adaptée aux cabinets et patients locaux.",
+    "home.backHome": "Retour à l’accueil",
+    "auth.doctorTitle": "Connexion médecin",
+    "auth.doctorSubtitle": "Accès au dashboard, création des patients et messagerie.",
+    "auth.patientTitle": "Connexion patient",
+    "auth.patientSubtitle": "Accès limité au questionnaire, feedback et messages reçus.",
+    "auth.login": "Se connecter",
+    "auth.enter": "Entrer",
+    "common.email": "Email",
+    "common.password": "Mot de passe",
+    "common.patientCode": "Code patient",
+    "nav.doctor": "Médecin",
+    "nav.patient": "Patient",
+    "nav.messages": "Messages",
+    "nav.database": "Base distante",
+    "views.doctorEyebrow": "Dashboard médecin",
+    "views.doctorTitle": "Suivi intelligent des patients MICI",
+    "views.patientEyebrow": "Espace patient",
+    "views.patientTitle": "Questionnaire quotidien et feedback immédiat",
+    "views.messagesEyebrow": "Communication",
+    "views.messagesTitle": "Messages sécurisés médecin-patient",
+    "views.databaseEyebrow": "Base distante",
+    "views.databaseTitle": "Connexion PostgreSQL distante via Supabase",
+    "actions.refresh": "Synchroniser",
+    "actions.resetDemo": "Réinitialiser la démo",
+    "actions.logout": "Déconnexion",
+    "actions.generate": "Générer",
+    "actions.createPatient": "Créer le patient",
+    "actions.search": "Recherche",
+    "actions.change": "Changer",
+    "actions.submitFollowup": "Envoyer le suivi",
+    "actions.send": "Envoyer",
+    "doctor.addPatient": "Ajouter un patient",
+    "doctor.addPatientHint": "Le code est unique et peut être généré automatiquement.",
+    "doctor.patients": "Patients",
+    "doctor.priorityHint": "Priorisation automatique selon symptômes et observance.",
+    "patient.firstName": "Prénom",
+    "patient.lastName": "Nom",
+    "patient.phone": "Téléphone",
+    "patient.noPhone": "Téléphone non renseigné",
+    "patient.diagnosis": "Diagnostic",
+    "patient.currentTreatment": "Traitement en cours",
+    "patient.codeAccessHint": "Accès par code anonyme remis par le médecin.",
+    "patient.dailyQuestionnaire": "Questionnaire quotidien",
+    "question.treatmentTaken": "Traitement pris",
+    "question.stools": "Nombre de selles",
+    "question.blood": "Sang dans les selles",
+    "question.fever": "Fièvre",
+    "question.pain": "Douleur abdominale",
+    "question.fatigue": "Fatigue",
+    "question.sideEffects": "Effets secondaires",
+    "question.generalState": "État général",
+    "state.good": "Bien",
+    "state.medium": "Moyen",
+    "state.bad": "Mauvais",
+    "messages.secureTitle": "Messagerie sécurisée",
+    "messages.secureHint": "Convocation, conseil thérapeutique et suivi à distance.",
+    "messages.doctorMessage": "Message médecin",
+    "messages.history": "Historique",
+    "messages.historyHint": "Messages médecin → patient et réponses enregistrées.",
+    "database.configTitle": "Configuration Supabase",
+    "database.configHint": "La connexion distante est lue depuis config.js, pas depuis le dashboard.",
+    "database.modelTitle": "Modèle de données",
+    "database.modelHint": "Tables utilisées par le prototype et prêtes pour les règles RLS.",
+    "database.patientsTable": "nom, prénom, téléphone, code unique",
+    "database.reportsTable": "questionnaire quotidien et score",
+    "database.treatmentsTable": "historique thérapeutique",
+    "database.eventsTable": "timeline et décisions",
+    "database.messagesTable": "communication médecin-patient",
+    "database.openSql": "Ouvrir le script SQL Supabase",
+    "database.openConfig": "Ouvrir config.js",
+    "database.mode": "Mode",
+    "database.remoteMode": "Supabase distant",
+    "database.localMode": "Démo locale",
+    "database.projectUrl": "Project URL",
+    "database.anonKey": "Anon key",
+    "database.notConfigured": "Non configurée",
+    "database.configInstruction": "Modifie config.js, puis recharge la page pour changer la connexion. Le dashboard ne demande plus la clé.",
+    "status.all": "Tous",
+    "status.green": "Stable",
+    "status.orange": "À surveiller",
+    "status.red": "Alerte",
+    "status.never": "jamais",
+    "status.now": "à l’instant",
+    "status.hoursAgo": "il y a {count} h",
+    "status.daysAgo": "il y a {count} j",
+    "sync.local": "Mode démo local",
+    "sync.remote": "Base distante connectée",
+    "sync.loading": "Synchronisation...",
+    "sync.failed": "Connexion distante impossible",
+    "placeholders.treatment": "Biothérapie, CTC, mésalazine...",
+    "placeholders.patientSearch": "Nom, prénom, code ou téléphone",
+    "placeholders.sideEffects": "Aucun, nausées, céphalées...",
+    "placeholders.message": "Merci de contacter le cabinet aujourd’hui...",
+    "metrics.totalPatients": "Patients suivis",
+    "metrics.totalPatientsHint": "codes anonymisés",
+    "metrics.redAlerts": "Alertes rouges",
+    "metrics.redAlertsHint": "nécessitent une action",
+    "metrics.avgAdherence": "Observance moyenne",
+    "metrics.avgAdherenceHint": "14 derniers jours",
+    "metrics.reports24h": "Questionnaires 24h",
+    "metrics.reports24hHint": "activité récente",
+    "table.patient": "Patient",
+    "table.phone": "Téléphone",
+    "table.diagnosis": "Diagnostic",
+    "table.treatment": "Traitement",
+    "table.adherence": "Observance",
+    "table.symptoms": "Symptômes",
+    "table.lastActivity": "Dernière activité",
+    "table.noResults": "Aucun patient ne correspond à la recherche.",
+    "pagination.summary": "{start}-{end} sur {total} patient{plural}",
+    "detail.alerts": "Alertes intelligentes",
+    "detail.currentTreatment": "Traitement en cours",
+    "detail.clinicalScore": "Score clinique",
+    "detail.stools": "Nombre de selles",
+    "detail.pain": "Douleur",
+    "detail.fatigue": "Fatigue",
+    "detail.adherence": "Observance",
+    "detail.treatmentHistory": "Historique des traitements",
+    "detail.medicalTimeline": "Timeline médicale",
+    "detail.noPatient": "Aucun patient enregistré.",
+    "detail.noRecentSymptoms": "Aucun symptôme récent",
+    "detail.inProgress": "en cours",
+    "symptoms.stools": "{count} selles",
+    "symptoms.pain": "douleur {value}/10",
+    "symptoms.fatigue": "fatigue {value}/10",
+    "symptoms.blood": "sang",
+    "symptoms.fever": "fièvre",
+    "alerts.noQuestionnaire": "Aucun questionnaire quotidien enregistré.",
+    "alerts.blood": "Sang dans les selles signalé.",
+    "alerts.fever": "Fièvre signalée.",
+    "alerts.highPain": "Douleur abdominale élevée.",
+    "alerts.highStools": "Nombre de selles élevé.",
+    "alerts.highFatigue": "Fatigue importante.",
+    "alerts.missedTreatment": "Traitement non pris lors du dernier suivi.",
+    "alerts.sideEffects": "Effets secondaires: {value}",
+    "alerts.stale": "Questionnaire non rempli depuis plus de 48 h.",
+    "alerts.lowAdherence": "Observance thérapeutique inférieure à 70%.",
+    "alerts.worsening": "Aggravation progressive sur plusieurs jours.",
+    "alerts.noWorsening": "Pas de signe d’aggravation détecté.",
+    "feedback.redTitle": "Contactez votre médecin",
+    "feedback.orangeTitle": "À surveiller",
+    "feedback.greenTitle": "Votre état est stable",
+    "feedback.redAdvice": "Contactez votre médecin ou le cabinet aujourd’hui.",
+    "feedback.orangeAdvice": "Surveillez vos symptômes et remplissez le questionnaire demain.",
+    "feedback.greenAdvice": "Votre état est stable, continuez votre traitement.",
+    "feedback.lastFollowup": "Dernier suivi",
+    "feedback.noQuestionnaire": "Aucun questionnaire",
+    "feedback.notifications": "Notifications",
+    "feedback.doctorMessages": "Messages médecin",
+    "feedback.noRecentMessage": "Aucun message récent.",
+    "feedback.connectPrompt": "Connectez-vous avec le code patient pour afficher le suivi.",
+    "notifications.questionnaire": "Rappel questionnaire quotidien.",
+    "notifications.treatment": "Rappel prise de traitement.",
+    "notifications.priority": "Message prioritaire: contact médical recommandé.",
+    "notifications.none": "Aucune notification urgente.",
+    "message.doctor": "Médecin",
+    "message.patient": "Patient",
+    "message.none": "Aucun message.",
+    "toast.doctorInvalid": "Email ou mot de passe médecin incorrect.",
+    "toast.patientInvalid": "Code patient introuvable.",
+    "toast.patientConnected": "Connexion patient active.",
+    "toast.doctorConnected": "Connexion médecin active.",
+    "toast.codeRequired": "Le code patient est obligatoire.",
+    "toast.codeExists": "Ce code patient existe déjà.",
+    "toast.requiredPatientFields": "Nom, prénom, téléphone et traitement sont obligatoires.",
+    "toast.patientCreated": "Patient {name} créé.",
+    "toast.messageRequired": "Choisis un patient et saisis un message.",
+    "toast.messageSent": "Message envoyé.",
+    "toast.reportSaved": "Questionnaire enregistré.",
+    "toast.localUpdated": "Données locales à jour.",
+    "toast.resetConfirm": "Réinitialiser les données locales de démonstration ?",
+    "toast.resetDone": "Démo locale réinitialisée.",
+    "toast.logout": "Déconnexion effectuée.",
+    "toast.remoteEmpty": "Base distante connectée, mais aucune donnée trouvée.",
+    "toast.remoteSynced": "Synchronisation Supabase terminée.",
+    "toast.remoteReadFailed": "Impossible de lire la base distante.",
+    "toast.supabaseReportFailed": "Échec Supabase, sauvegarde locale utilisée.",
+    "toast.supabaseMessageFailed": "Échec Supabase, message gardé localement.",
+    "toast.supabasePatientFailed": "Échec Supabase, patient gardé localement.",
+    "event.creationType": "Création",
+    "event.patientAdded": "Patient ajouté au suivi",
+    "event.patientCodeDetail": "Code d’accès: {code}",
+    "treatment.initialNote": "Traitement initial saisi à la création du patient."
+  },
+  ar: {
+    "app.title": "MICI TRACK - منصة تتبع مرضى الأمعاء الالتهابية",
+    "brand.authSubtitle": "دخول MICI TRACK",
+    "brand.clinicalPlatform": "منصة سريرية",
+    "home.eyebrow": "Smart Patient Monitoring",
+    "home.heroTitle": "Smart Patient Monitoring",
+    "home.lede": "تتبع حالة المرضى يوميا، اكتشف المخاطر مبكرا وامنح الطبيب رؤية واضحة وفورية لكل حالة.",
+    "home.doctorAccess": "دخول الطبيب",
+    "home.patientAccess": "دخول المريض",
+    "home.trust1": "تتبع عن بعد",
+    "home.trust2": "تنبيهات ذكية",
+    "home.trust3": "Français / عربي",
+    "home.aboutEyebrow": "من نحن",
+    "home.aboutTitle": "Smart Patient Monitoring",
+    "home.aboutText": "نحن فريق يعمل على تحسين تتبع المرضى عبر التكنولوجيا. هدفنا مساعدة الأطباء على ربح الوقت واتخاذ قرارات أفضل، مع منح المرضى طريقة سهلة لتتبع صحتهم يوميا.",
+    "home.featureDoctorTitle": "للطبيب",
+    "home.featureDoctorText": "لوحة متابعة، نتيجة سريرية، بحث، صفحات، إضافة المرضى ورسائل آمنة.",
+    "home.featurePatientTitle": "للمريض",
+    "home.featurePatientText": "دخول بالرمز، استبيان سريع، نتيجة فورية ورسائل الطبيب.",
+    "home.featureMoroccoTitle": "بروح مغربية",
+    "home.featureMoroccoText": "واجهة ثنائية اللغة فرنسية/عربية وتجربة مناسبة للعيادات والمرضى محليا.",
+    "home.backHome": "العودة إلى الصفحة الرئيسية",
+    "auth.doctorTitle": "دخول الطبيب",
+    "auth.doctorSubtitle": "الوصول إلى لوحة المتابعة، إضافة المرضى والرسائل.",
+    "auth.patientTitle": "دخول المريض",
+    "auth.patientSubtitle": "وصول محدود للاستبيان، النتيجة والرسائل المستلمة.",
+    "auth.login": "تسجيل الدخول",
+    "auth.enter": "دخول",
+    "common.email": "البريد الإلكتروني",
+    "common.password": "كلمة المرور",
+    "common.patientCode": "رمز المريض",
+    "nav.doctor": "الطبيب",
+    "nav.patient": "المريض",
+    "nav.messages": "الرسائل",
+    "nav.database": "قاعدة بعيدة",
+    "views.doctorEyebrow": "لوحة الطبيب",
+    "views.doctorTitle": "تتبع ذكي لمرضى MICI",
+    "views.patientEyebrow": "فضاء المريض",
+    "views.patientTitle": "استبيان يومي ونتيجة فورية",
+    "views.messagesEyebrow": "التواصل",
+    "views.messagesTitle": "رسائل آمنة بين الطبيب والمريض",
+    "views.databaseEyebrow": "قاعدة بعيدة",
+    "views.databaseTitle": "اتصال PostgreSQL بعيد عبر Supabase",
+    "actions.refresh": "مزامنة",
+    "actions.resetDemo": "إعادة ضبط demo",
+    "actions.logout": "تسجيل الخروج",
+    "actions.generate": "توليد",
+    "actions.createPatient": "إنشاء المريض",
+    "actions.search": "بحث",
+    "actions.change": "تغيير",
+    "actions.submitFollowup": "إرسال المتابعة",
+    "actions.send": "إرسال",
+    "doctor.addPatient": "إضافة مريض",
+    "doctor.addPatientHint": "الرمز فريد ويمكن توليده تلقائيا.",
+    "doctor.patients": "المرضى",
+    "doctor.priorityHint": "ترتيب تلقائي حسب الأعراض والالتزام بالعلاج.",
+    "patient.firstName": "الاسم الشخصي",
+    "patient.lastName": "الاسم العائلي",
+    "patient.phone": "الهاتف",
+    "patient.noPhone": "الهاتف غير مسجل",
+    "patient.diagnosis": "التشخيص",
+    "patient.currentTreatment": "العلاج الحالي",
+    "patient.codeAccessHint": "الدخول برمز مجهول يمنحه الطبيب.",
+    "patient.dailyQuestionnaire": "الاستبيان اليومي",
+    "question.treatmentTaken": "تم أخذ العلاج",
+    "question.stools": "عدد مرات التبرز",
+    "question.blood": "دم في البراز",
+    "question.fever": "حمى",
+    "question.pain": "ألم البطن",
+    "question.fatigue": "التعب",
+    "question.sideEffects": "أعراض جانبية",
+    "question.generalState": "الحالة العامة",
+    "state.good": "جيدة",
+    "state.medium": "متوسطة",
+    "state.bad": "سيئة",
+    "messages.secureTitle": "رسائل آمنة",
+    "messages.secureHint": "استدعاء، نصيحة علاجية وتتبع عن بعد.",
+    "messages.doctorMessage": "رسالة الطبيب",
+    "messages.history": "السجل",
+    "messages.historyHint": "رسائل الطبيب إلى المريض والردود المسجلة.",
+    "database.configTitle": "إعداد Supabase",
+    "database.configHint": "الاتصال البعيد يقرأ من config.js وليس من لوحة التحكم.",
+    "database.modelTitle": "نموذج البيانات",
+    "database.modelHint": "الجداول المستعملة في النموذج والقابلة لقواعد RLS.",
+    "database.patientsTable": "الاسم، الهاتف، الرمز الفريد",
+    "database.reportsTable": "الاستبيان اليومي والنتيجة",
+    "database.treatmentsTable": "تاريخ العلاجات",
+    "database.eventsTable": "الخط الزمني والقرارات",
+    "database.messagesTable": "تواصل الطبيب والمريض",
+    "database.openSql": "فتح ملف SQL الخاص ب Supabase",
+    "database.openConfig": "فتح config.js",
+    "database.mode": "الوضع",
+    "database.remoteMode": "Supabase بعيد",
+    "database.localMode": "Demo محلي",
+    "database.projectUrl": "رابط المشروع",
+    "database.anonKey": "المفتاح العام",
+    "database.notConfigured": "غير مهيأة",
+    "database.configInstruction": "عدّل config.js ثم أعد تحميل الصفحة لتغيير الاتصال. لوحة التحكم لا تطلب المفتاح.",
+    "status.all": "الكل",
+    "status.green": "مستقر",
+    "status.orange": "للمراقبة",
+    "status.red": "إنذار",
+    "status.never": "لا يوجد",
+    "status.now": "الآن",
+    "status.hoursAgo": "منذ {count} ساعة",
+    "status.daysAgo": "منذ {count} يوم",
+    "sync.local": "وضع demo محلي",
+    "sync.remote": "قاعدة بعيدة متصلة",
+    "sync.loading": "جاري المزامنة...",
+    "sync.failed": "تعذر الاتصال بالقاعدة البعيدة",
+    "placeholders.treatment": "بيولوجي، كورتيكويد، ميزالازين...",
+    "placeholders.patientSearch": "الاسم، الرمز أو الهاتف",
+    "placeholders.sideEffects": "لا شيء، غثيان، صداع...",
+    "placeholders.message": "يرجى التواصل مع العيادة اليوم...",
+    "metrics.totalPatients": "المرضى المتابعون",
+    "metrics.totalPatientsHint": "رموز مجهولة",
+    "metrics.redAlerts": "إنذارات حمراء",
+    "metrics.redAlertsHint": "تحتاج إلى تدخل",
+    "metrics.avgAdherence": "متوسط الالتزام",
+    "metrics.avgAdherenceHint": "آخر 14 يوما",
+    "metrics.reports24h": "استبيانات 24 ساعة",
+    "metrics.reports24hHint": "نشاط حديث",
+    "table.patient": "المريض",
+    "table.phone": "الهاتف",
+    "table.diagnosis": "التشخيص",
+    "table.treatment": "العلاج",
+    "table.adherence": "الالتزام",
+    "table.symptoms": "الأعراض",
+    "table.lastActivity": "آخر نشاط",
+    "table.noResults": "لا يوجد مريض مطابق للبحث.",
+    "pagination.summary": "{start}-{end} من {total} مريض",
+    "detail.alerts": "تنبيهات ذكية",
+    "detail.currentTreatment": "العلاج الحالي",
+    "detail.clinicalScore": "النتيجة السريرية",
+    "detail.stools": "عدد مرات التبرز",
+    "detail.pain": "الألم",
+    "detail.fatigue": "التعب",
+    "detail.adherence": "الالتزام",
+    "detail.treatmentHistory": "تاريخ العلاجات",
+    "detail.medicalTimeline": "الخط الزمني الطبي",
+    "detail.noPatient": "لا يوجد أي مريض مسجل.",
+    "detail.noRecentSymptoms": "لا توجد أعراض حديثة",
+    "detail.inProgress": "مستمر",
+    "symptoms.stools": "{count} مرات تبرز",
+    "symptoms.pain": "ألم {value}/10",
+    "symptoms.fatigue": "تعب {value}/10",
+    "symptoms.blood": "دم",
+    "symptoms.fever": "حمى",
+    "alerts.noQuestionnaire": "لم يتم تسجيل أي استبيان يومي.",
+    "alerts.blood": "تم الإبلاغ عن دم في البراز.",
+    "alerts.fever": "تم الإبلاغ عن حمى.",
+    "alerts.highPain": "ألم بطني مرتفع.",
+    "alerts.highStools": "عدد مرات التبرز مرتفع.",
+    "alerts.highFatigue": "تعب مهم.",
+    "alerts.missedTreatment": "لم يتم أخذ العلاج في آخر متابعة.",
+    "alerts.sideEffects": "أعراض جانبية: {value}",
+    "alerts.stale": "لم يتم ملء الاستبيان منذ أكثر من 48 ساعة.",
+    "alerts.lowAdherence": "الالتزام بالعلاج أقل من 70%.",
+    "alerts.worsening": "تدهور تدريجي خلال عدة أيام.",
+    "alerts.noWorsening": "لم يتم رصد علامات تدهور.",
+    "feedback.redTitle": "اتصل بطبيبك",
+    "feedback.orangeTitle": "للمراقبة",
+    "feedback.greenTitle": "حالتك مستقرة",
+    "feedback.redAdvice": "اتصل بطبيبك أو بالعيادة اليوم.",
+    "feedback.orangeAdvice": "راقب الأعراض واملأ الاستبيان غدا.",
+    "feedback.greenAdvice": "حالتك مستقرة، واصل علاجك.",
+    "feedback.lastFollowup": "آخر متابعة",
+    "feedback.noQuestionnaire": "لا يوجد استبيان",
+    "feedback.notifications": "الإشعارات",
+    "feedback.doctorMessages": "رسائل الطبيب",
+    "feedback.noRecentMessage": "لا توجد رسائل حديثة.",
+    "feedback.connectPrompt": "سجل الدخول برمز المريض لعرض المتابعة.",
+    "notifications.questionnaire": "تذكير بالاستبيان اليومي.",
+    "notifications.treatment": "تذكير بأخذ العلاج.",
+    "notifications.priority": "رسالة مهمة: يوصى بالتواصل الطبي.",
+    "notifications.none": "لا توجد إشعارات عاجلة.",
+    "message.doctor": "الطبيب",
+    "message.patient": "المريض",
+    "message.none": "لا توجد رسائل.",
+    "toast.doctorInvalid": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+    "toast.patientInvalid": "رمز المريض غير موجود.",
+    "toast.patientConnected": "تم دخول المريض.",
+    "toast.doctorConnected": "تم دخول الطبيب.",
+    "toast.codeRequired": "رمز المريض ضروري.",
+    "toast.codeExists": "هذا الرمز موجود مسبقا.",
+    "toast.requiredPatientFields": "الاسم، الهاتف والعلاج ضرورية.",
+    "toast.patientCreated": "تم إنشاء المريض {name}.",
+    "toast.messageRequired": "اختر مريضا واكتب رسالة.",
+    "toast.messageSent": "تم إرسال الرسالة.",
+    "toast.reportSaved": "تم حفظ الاستبيان.",
+    "toast.localUpdated": "البيانات المحلية محدثة.",
+    "toast.resetConfirm": "هل تريد إعادة ضبط بيانات demo المحلية؟",
+    "toast.resetDone": "تمت إعادة ضبط demo المحلي.",
+    "toast.logout": "تم تسجيل الخروج.",
+    "toast.remoteEmpty": "تم الاتصال بالقاعدة البعيدة، لكن لا توجد بيانات.",
+    "toast.remoteSynced": "تمت مزامنة Supabase.",
+    "toast.remoteReadFailed": "تعذرت قراءة القاعدة البعيدة.",
+    "toast.supabaseReportFailed": "تعذر Supabase، تم الحفظ محليا.",
+    "toast.supabaseMessageFailed": "تعذر Supabase، تم حفظ الرسالة محليا.",
+    "toast.supabasePatientFailed": "تعذر Supabase، تم حفظ المريض محليا.",
+    "event.creationType": "إنشاء",
+    "event.patientAdded": "تمت إضافة المريض للمتابعة",
+    "event.patientCodeDetail": "رمز الدخول: {code}",
+    "treatment.initialNote": "العلاج الأولي المدخل عند إنشاء المريض."
+  }
+};
 
 const views = {
   doctor: {
     node: document.querySelector("#doctorView"),
-    eyebrow: "Dashboard médecin",
-    title: "Suivi intelligent des patients MICI",
+    eyebrowKey: "views.doctorEyebrow",
+    titleKey: "views.doctorTitle",
   },
   patient: {
     node: document.querySelector("#patientView"),
-    eyebrow: "Espace patient",
-    title: "Questionnaire quotidien et feedback immédiat",
+    eyebrowKey: "views.patientEyebrow",
+    titleKey: "views.patientTitle",
   },
   messages: {
     node: document.querySelector("#messagesView"),
-    eyebrow: "Communication",
-    title: "Messages sécurisés médecin-patient",
+    eyebrowKey: "views.messagesEyebrow",
+    titleKey: "views.messagesTitle",
   },
   database: {
     node: document.querySelector("#databaseView"),
-    eyebrow: "Base distante",
-    title: "Connexion PostgreSQL distante via Supabase",
+    eyebrowKey: "views.databaseEyebrow",
+    titleKey: "views.databaseTitle",
   },
 };
 
+let currentLang = loadLanguage();
 let state = loadState();
 let activeView = "doctor";
 let selectedPatientId = state.patients[0]?.id ?? null;
@@ -36,13 +450,21 @@ let patientSearch = "";
 let patientPage = 1;
 let session = loadSession();
 let dbConfig = loadDbConfig();
+let showAuth = false;
+let activeAuthRole = "doctor";
+let heroAnimationId = null;
 
 const els = {
+  homeShell: document.querySelector("#homeShell"),
+  homeHeroCanvas: document.querySelector("#homeHeroCanvas"),
+  homeDoctorButton: document.querySelector("#homeDoctorButton"),
+  homePatientButton: document.querySelector("#homePatientButton"),
+  backHomeButton: document.querySelector("#backHomeButton"),
   authShell: document.querySelector("#authShell"),
   appShell: document.querySelector("#appShell"),
+  authGrid: document.querySelector("#authGrid"),
   doctorLoginForm: document.querySelector("#doctorLoginForm"),
   patientLoginForm: document.querySelector("#patientLoginForm"),
-  doctorDemoHint: document.querySelector("#doctorDemoHint"),
   authDemoCodes: document.querySelector("#authDemoCodes"),
   navTabs: document.querySelectorAll(".nav-tab"),
   sectionEyebrow: document.querySelector("#sectionEyebrow"),
@@ -77,6 +499,8 @@ const els = {
 init();
 
 function init() {
+  bindLanguage();
+  bindHome();
   bindAuth();
   bindNavigation();
   bindFilters();
@@ -91,24 +515,171 @@ function init() {
   }
 }
 
-function bindAuth() {
-  els.doctorDemoHint.textContent = `Démo: ${appConfig.doctorEmail} / ${appConfig.doctorPassword}`;
+function bindHome() {
+  els.homeDoctorButton.addEventListener("click", () => {
+    showAuth = true;
+    activeAuthRole = "doctor";
+    renderAll();
+    els.doctorLoginForm.elements.email.focus();
+  });
 
+  els.homePatientButton.addEventListener("click", () => {
+    showAuth = true;
+    activeAuthRole = "patient";
+    renderAll();
+    els.patientLoginForm.elements.patientCode.focus();
+  });
+
+  els.backHomeButton.addEventListener("click", () => {
+    showAuth = false;
+    renderAll();
+  });
+
+  window.addEventListener("resize", () => drawHeroScene(performance.now()));
+  startHeroScene();
+}
+
+function startHeroScene() {
+  const animate = (time) => {
+    drawHeroScene(time);
+    heroAnimationId = requestAnimationFrame(animate);
+  };
+  if (!heroAnimationId) heroAnimationId = requestAnimationFrame(animate);
+}
+
+function drawHeroScene(time = 0) {
+  const canvas = els.homeHeroCanvas;
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const ratio = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  const width = Math.max(1, rect.width);
+  const height = Math.max(1, rect.height);
+  canvas.width = width * ratio;
+  canvas.height = height * ratio;
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  ctx.clearRect(0, 0, width, height);
+  ctx.fillStyle = "#f8fbfd";
+  ctx.fillRect(0, 0, width, height);
+
+  const drift = Math.sin(time / 1800) * 18;
+  const baseX = currentLang === "ar" ? width * 0.18 : width * 0.72;
+  const points = [
+    [baseX, height * 0.1],
+    [baseX + 90, height * 0.22],
+    [baseX - 110 + drift, height * 0.38],
+    [baseX + 70, height * 0.55],
+    [baseX - 70, height * 0.72],
+    [baseX + 30, height * 0.88],
+  ];
+
+  ctx.lineWidth = Math.max(28, width * 0.032);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.strokeStyle = "rgba(15, 139, 141, 0.12)";
+  ctx.beginPath();
+  ctx.moveTo(points[0][0], points[0][1]);
+  for (let index = 1; index < points.length; index += 1) {
+    const [x, y] = points[index];
+    const [px, py] = points[index - 1];
+    ctx.quadraticCurveTo(px + (x - px) * 0.65, py + (y - py) * 0.18, x, y);
+  }
+  ctx.stroke();
+
+  ctx.lineWidth = Math.max(5, width * 0.006);
+  ctx.strokeStyle = "rgba(15, 139, 141, 0.42)";
+  ctx.stroke();
+
+  const pulse = (Math.sin(time / 420) + 1) / 2;
+  const nodes = [
+    [width * 0.18, height * 0.24, "#c1272d"],
+    [width * 0.28, height * 0.6, "#006233"],
+    [width * 0.82, height * 0.36, "#0f8b8d"],
+    [width * 0.75, height * 0.76, "#3f6fb5"],
+  ];
+  nodes.forEach(([x, y, color], index) => {
+    const radius = 5 + pulse * 4 + index;
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.18;
+    ctx.beginPath();
+    ctx.arc(x, y, radius * 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 0.75;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  });
+
+  ctx.strokeStyle = "rgba(24, 33, 47, 0.07)";
+  ctx.lineWidth = 1;
+  for (let x = 0; x < width; x += 58) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x + width * 0.08, height);
+    ctx.stroke();
+  }
+}
+
+function bindLanguage() {
+  document.querySelectorAll("[data-lang]").forEach((button) => {
+    button.addEventListener("click", () => {
+      currentLang = button.dataset.lang;
+      localStorage.setItem(LANG_KEY, currentLang);
+      renderAll();
+    });
+  });
+}
+
+function applyLanguage() {
+  document.documentElement.lang = currentLang;
+  document.documentElement.dir = currentLang === "ar" ? "rtl" : "ltr";
+  document.title = t("app.title");
+
+  document.querySelectorAll("[data-i18n]").forEach((node) => {
+    node.textContent = t(node.dataset.i18n);
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
+    node.setAttribute("placeholder", t(node.dataset.i18nPlaceholder));
+  });
+  document.querySelectorAll("[data-i18n-title]").forEach((node) => {
+    node.setAttribute("title", t(node.dataset.i18nTitle));
+  });
+  document.querySelectorAll("[data-lang]").forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.lang === currentLang);
+  });
+}
+
+function t(key, params = {}) {
+  const phrase = I18N[currentLang]?.[key] ?? I18N.fr[key] ?? key;
+  return Object.entries(params).reduce(
+    (text, [name, value]) => text.replaceAll(`{${name}}`, String(value)),
+    phrase,
+  );
+}
+
+function loadLanguage() {
+  const saved = localStorage.getItem(LANG_KEY);
+  return saved === "ar" ? "ar" : "fr";
+}
+
+function bindAuth() {
   els.doctorLoginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const form = new FormData(els.doctorLoginForm);
     const email = String(form.get("email") || "").trim().toLowerCase();
     const password = String(form.get("password") || "");
     if (email !== appConfig.doctorEmail.toLowerCase() || password !== appConfig.doctorPassword) {
-      showToast("Email ou mot de passe médecin incorrect.");
+      showToast(t("toast.doctorInvalid"));
       return;
     }
     session = { role: "doctor", signedInAt: new Date().toISOString() };
+    showAuth = false;
     saveSession();
     activeView = "doctor";
     await ensureRemoteLoaded();
     renderAll();
-    showToast("Connexion médecin active.");
+    showToast(t("toast.doctorConnected"));
   });
 
   els.patientLoginForm.addEventListener("submit", async (event) => {
@@ -118,16 +689,17 @@ function bindAuth() {
     const code = String(form.get("patientCode") || "").trim().toUpperCase();
     const patient = findPatientByCode(code);
     if (!patient) {
-      showToast("Code patient introuvable.");
+      showToast(t("toast.patientInvalid"));
       return;
     }
     session = { role: "patient", patientId: patient.id, signedInAt: new Date().toISOString() };
+    showAuth = false;
     patientSessionId = patient.id;
     selectedPatientId = patient.id;
     saveSession();
     activeView = "patient";
     renderAll();
-    showToast("Connexion patient active.");
+    showToast(t("toast.patientConnected"));
   });
 }
 
@@ -170,11 +742,11 @@ function bindPatientAdmin() {
     const form = new FormData(els.addPatientForm);
     const code = normalizeCode(form.get("code"));
     if (!code) {
-      showToast("Le code patient est obligatoire.");
+      showToast(t("toast.codeRequired"));
       return;
     }
     if (findPatientByCode(code)) {
-      showToast("Ce code patient existe déjà.");
+      showToast(t("toast.codeExists"));
       return;
     }
 
@@ -190,7 +762,7 @@ function bindPatientAdmin() {
     };
 
     if (!patient.first_name || !patient.last_name || !patient.phone || !patient.current_treatment) {
-      showToast("Nom, prénom, téléphone et traitement sont obligatoires.");
+      showToast(t("toast.requiredPatientFields"));
       return;
     }
 
@@ -201,15 +773,15 @@ function bindPatientAdmin() {
       label: patient.current_treatment,
       start_date: dateOnly(new Date().toISOString()),
       end_date: null,
-      notes: "Traitement initial saisi à la création du patient.",
+      notes: t("treatment.initialNote"),
       created_at: new Date().toISOString(),
     });
     await saveMedicalEvent({
       id: createId("event"),
       patient_id: patient.id,
-      type: "Création",
-      title: "Patient ajouté au suivi",
-      details: `Code d’accès: ${patient.code}`,
+      type: t("event.creationType"),
+      title: t("event.patientAdded"),
+      details: t("event.patientCodeDetail", { code: patient.code }),
       event_date: new Date().toISOString(),
       created_at: new Date().toISOString(),
     });
@@ -219,7 +791,7 @@ function bindPatientAdmin() {
     els.addPatientForm.reset();
     els.addPatientForm.elements.code.value = generateUniquePatientCode();
     renderAll();
-    showToast(`Patient ${patientFullName(patient)} créé.`);
+    showToast(t("toast.patientCreated", { name: patientFullName(patient) }));
   });
 
   els.addPatientForm.elements.code.value = generateUniquePatientCode();
@@ -231,15 +803,16 @@ function bindPatientSpace() {
     const code = els.patientCode.value.trim().toUpperCase();
     const patient = findPatientByCode(code);
     if (!patient) {
-      showToast("Code patient introuvable.");
+      showToast(t("toast.patientInvalid"));
       return;
     }
     patientSessionId = patient.id;
     selectedPatientId = patient.id;
     session = { role: "patient", patientId: patient.id, signedInAt: new Date().toISOString() };
+    showAuth = false;
     saveSession();
     activeView = "patient";
-    showToast("Connexion patient active.");
+    showToast(t("toast.patientConnected"));
     renderAll();
   });
 
@@ -270,7 +843,7 @@ function bindPatientSpace() {
     await saveReport(report);
     selectedPatientId = patientSessionId;
     renderAll();
-    showToast("Questionnaire enregistré.");
+    showToast(t("toast.reportSaved"));
   });
 }
 
@@ -292,7 +865,7 @@ function bindMessages() {
     const patientId = String(form.get("patient_id") || "");
     const content = String(form.get("content") || "").trim();
     if (!patientId || !content) {
-      showToast("Choisis un patient et saisis un message.");
+      showToast(t("toast.messageRequired"));
       return;
     }
 
@@ -306,7 +879,7 @@ function bindMessages() {
     });
     els.messageForm.reset();
     renderAll();
-    showToast("Message envoyé.");
+    showToast(t("toast.messageSent"));
   });
 }
 
@@ -316,19 +889,19 @@ function bindGlobalActions() {
       await loadRemoteData();
     } else {
       renderAll();
-      showToast("Données locales à jour.");
+      showToast(t("toast.localUpdated"));
     }
   });
 
   els.seedButton.addEventListener("click", () => {
     if (!isDoctor()) return;
-    if (!confirm("Réinitialiser les données locales de démonstration ?")) return;
+    if (!confirm(t("toast.resetConfirm"))) return;
     state = createDemoData();
     saveLocalState();
     selectedPatientId = state.patients[0]?.id ?? null;
     patientSessionId = null;
     renderAll();
-    showToast("Démo locale réinitialisée.");
+    showToast(t("toast.resetDone"));
   });
 
   els.logoutButton.addEventListener("click", logout);
@@ -343,11 +916,12 @@ function setView(viewName) {
     view.node.classList.toggle("is-visible", key === viewName);
   });
   els.navTabs.forEach((tab) => tab.classList.toggle("is-active", tab.dataset.view === viewName));
-  els.sectionEyebrow.textContent = views[viewName].eyebrow;
-  els.sectionTitle.textContent = views[viewName].title;
+  els.sectionEyebrow.textContent = t(views[viewName].eyebrowKey);
+  els.sectionTitle.textContent = t(views[viewName].titleKey);
 }
 
 function renderAll() {
+  applyLanguage();
   applyAccessState();
   renderAuthCodes();
   if (!session?.role) {
@@ -370,8 +944,12 @@ function renderAll() {
 
 function applyAccessState() {
   const authenticated = Boolean(session?.role);
-  els.authShell.hidden = authenticated;
+  els.homeShell.hidden = authenticated || showAuth;
+  els.authShell.hidden = authenticated || !showAuth;
   els.appShell.hidden = !authenticated;
+  els.doctorLoginForm.hidden = activeAuthRole !== "doctor";
+  els.patientLoginForm.hidden = activeAuthRole !== "patient";
+  els.authGrid.classList.add("is-single");
   els.refreshButton.hidden = !isDoctor();
   els.seedButton.hidden = !isDoctor();
 
@@ -432,11 +1010,16 @@ function logout() {
   patientSessionId = null;
   sessionStorage.removeItem(SESSION_KEY);
   activeView = "doctor";
+  showAuth = false;
   renderAll();
-  showToast("Déconnexion effectuée.");
+  showToast(t("toast.logout"));
 }
 
 function renderAuthCodes() {
+  if (!appConfig.showDemoHelpers) {
+    els.authDemoCodes.innerHTML = "";
+    return;
+  }
   els.authDemoCodes.innerHTML = state.patients
     .slice(0, 4)
     .map((patient) => `<button class="code-chip" type="button" data-code="${escapeHtml(patient.code)}">${escapeHtml(patient.code)}</button>`)
@@ -471,10 +1054,10 @@ function renderMetrics(analytics) {
   );
 
   const metrics = [
-    { label: "Patients suivis", value: state.patients.length, hint: "codes anonymisés" },
-    { label: "Alertes rouges", value: redCount, hint: "nécessitent une action" },
-    { label: "Observance moyenne", value: `${avgAdherence}%`, hint: "14 derniers jours" },
-    { label: "Questionnaires 24h", value: reports24h, hint: "activité récente" },
+    { label: t("metrics.totalPatients"), value: state.patients.length, hint: t("metrics.totalPatientsHint") },
+    { label: t("metrics.redAlerts"), value: redCount, hint: t("metrics.redAlertsHint") },
+    { label: t("metrics.avgAdherence"), value: `${avgAdherence}%`, hint: t("metrics.avgAdherenceHint") },
+    { label: t("metrics.reports24h"), value: reports24h, hint: t("metrics.reports24hHint") },
   ];
 
   els.metricGrid.innerHTML = metrics
@@ -503,13 +1086,13 @@ function renderPatientTable(analytics) {
 
   els.patientTable.innerHTML = `
     <div class="table-header" aria-hidden="true">
-      <span>Patient</span>
-      <span>Téléphone</span>
-      <span>Diagnostic</span>
-      <span>Traitement</span>
-      <span>Observance</span>
-      <span>Symptômes</span>
-      <span>Dernière activité</span>
+      <span>${t("table.patient")}</span>
+      <span>${t("table.phone")}</span>
+      <span>${t("table.diagnosis")}</span>
+      <span>${t("table.treatment")}</span>
+      <span>${t("table.adherence")}</span>
+      <span>${t("table.symptoms")}</span>
+      <span>${t("table.lastActivity")}</span>
     </div>
     ${
       rows.length
@@ -539,7 +1122,7 @@ function renderPatientTable(analytics) {
         `,
             )
             .join("")
-        : `<div class="timeline-item">Aucun patient ne correspond à la recherche.</div>`
+        : `<div class="timeline-item">${t("table.noResults")}</div>`
     }
   `;
 
@@ -556,8 +1139,9 @@ function renderPatientTable(analytics) {
 function renderPagination(totalRows, totalPages) {
   const start = totalRows === 0 ? 0 : (patientPage - 1) * PAGE_SIZE + 1;
   const end = Math.min(totalRows, patientPage * PAGE_SIZE);
+  const plural = currentLang === "fr" && totalRows > 1 ? "s" : "";
   els.patientPagination.innerHTML = `
-    <span class="muted">${start}-${end} sur ${totalRows} patient${totalRows > 1 ? "s" : ""}</span>
+    <span class="muted">${t("pagination.summary", { start, end, total: totalRows, plural })}</span>
     <div class="pagination-actions">
       <button type="button" data-page-action="prev" ${patientPage <= 1 ? "disabled" : ""}>‹</button>
       <button type="button" data-page-action="next" ${patientPage >= totalPages ? "disabled" : ""}>›</button>
@@ -575,7 +1159,7 @@ function renderPagination(totalRows, totalPages) {
 function renderPatientDetail() {
   const patient = state.patients.find((item) => item.id === selectedPatientId) ?? state.patients[0];
   if (!patient) {
-    els.patientDetail.innerHTML = `<div class="detail-body"><p>Aucun patient enregistré.</p></div>`;
+    els.patientDetail.innerHTML = `<div class="detail-body"><p>${t("detail.noPatient")}</p></div>`;
     return;
   }
   selectedPatientId = patient.id;
@@ -588,7 +1172,7 @@ function renderPatientDetail() {
     <div class="panel-header">
       <div>
         <h2>${escapeHtml(patientFullName(patient))}</h2>
-        <p>${escapeHtml(patient.code)} · ${escapeHtml(patient.phone || "Téléphone non renseigné")} · ${escapeHtml(patient.diagnosis)}</p>
+        <p>${escapeHtml(patient.code)} · ${escapeHtml(patient.phone || t("patient.noPhone"))} · ${escapeHtml(patient.diagnosis)}</p>
       </div>
       <span class="status-pill ${analysis.status}">
         <span class="status-dot ${analysis.status}"></span>${escapeHtml(analysis.label)}
@@ -597,9 +1181,9 @@ function renderPatientDetail() {
     <div class="detail-body">
       <div class="detail-summary">
         <div>
-          <h3>Traitement en cours</h3>
+          <h3>${t("detail.currentTreatment")}</h3>
           <div class="timeline-item">${escapeHtml(patient.current_treatment)}</div>
-          <h3>Alertes intelligentes</h3>
+          <h3>${t("detail.alerts")}</h3>
           <div class="alert-list">
             ${analysis.reasons
               .map(
@@ -615,27 +1199,27 @@ function renderPatientDetail() {
         <div class="score-block">
           <div>
             <strong>${analysis.score}</strong>
-            <span>Score clinique</span>
+            <span>${t("detail.clinicalScore")}</span>
           </div>
         </div>
       </div>
 
       <div class="chart-grid">
-        ${chartTile("Nombre de selles", "stoolsChart")}
-        ${chartTile("Douleur", "painChart")}
-        ${chartTile("Fatigue", "fatigueChart")}
-        ${chartTile("Observance", "adherenceChart")}
+        ${chartTile(t("detail.stools"), "stoolsChart")}
+        ${chartTile(t("detail.pain"), "painChart")}
+        ${chartTile(t("detail.fatigue"), "fatigueChart")}
+        ${chartTile(t("detail.adherence"), "adherenceChart")}
       </div>
 
       <div>
-        <h3>Historique des traitements</h3>
+        <h3>${t("detail.treatmentHistory")}</h3>
         <div class="treatment-list">
           ${treatments
             .map(
               (item) => `
                 <div class="treatment-item">
                   <strong>${escapeHtml(item.label)}</strong>
-                  <time>${formatDate(item.start_date)}${item.end_date ? ` - ${formatDate(item.end_date)}` : " - en cours"}</time>
+                  <time>${formatDate(item.start_date)}${item.end_date ? ` - ${formatDate(item.end_date)}` : ` - ${t("detail.inProgress")}`}</time>
                   <span class="muted">${escapeHtml(item.notes || "")}</span>
                 </div>
               `,
@@ -645,7 +1229,7 @@ function renderPatientDetail() {
       </div>
 
       <div>
-        <h3>Timeline médicale</h3>
+        <h3>${t("detail.medicalTimeline")}</h3>
         <div class="timeline">
           ${events
             .sort((a, b) => new Date(b.event_date) - new Date(a.event_date))
@@ -762,7 +1346,7 @@ function renderPatient() {
 function renderPatientFeedback(patient) {
   const activePatient = patient ?? state.patients.find((item) => item.id === patientSessionId) ?? null;
   if (!activePatient) {
-    els.patientFeedback.innerHTML = `<p>Connectez-vous avec le code patient pour afficher le suivi.</p>`;
+    els.patientFeedback.innerHTML = `<p>${t("feedback.connectPrompt")}</p>`;
     return;
   }
   const analysis = analyzePatient(activePatient);
@@ -774,10 +1358,10 @@ function renderPatientFeedback(patient) {
 
   const recommendation =
     analysis.status === "red"
-      ? "Contactez votre médecin ou le cabinet aujourd’hui."
+      ? t("feedback.redAdvice")
       : analysis.status === "orange"
-        ? "Surveillez vos symptômes et remplissez le questionnaire demain."
-        : "Votre état est stable, continuez votre traitement.";
+        ? t("feedback.orangeAdvice")
+        : t("feedback.greenAdvice");
 
   els.patientFeedback.innerHTML = `
     <div class="feedback-card">
@@ -789,12 +1373,12 @@ function renderPatientFeedback(patient) {
         <span>${analysis.score}/15</span>
       </div>
       <div class="timeline-item">
-        <strong>Dernier suivi</strong>
-        <time>${latest ? formatDateTime(latest.submitted_at) : "Aucun questionnaire"}</time>
+        <strong>${t("feedback.lastFollowup")}</strong>
+        <time>${latest ? formatDateTime(latest.submitted_at) : t("feedback.noQuestionnaire")}</time>
         <span class="muted">${escapeHtml(analysis.symptoms)}</span>
       </div>
       <div>
-        <h3>Notifications</h3>
+        <h3>${t("feedback.notifications")}</h3>
         <div class="timeline">
           ${buildPatientNotifications(activePatient, analysis)
             .map((item) => `<div class="timeline-item">${escapeHtml(item)}</div>`)
@@ -802,7 +1386,7 @@ function renderPatientFeedback(patient) {
         </div>
       </div>
       <div>
-        <h3>Messages médecin</h3>
+        <h3>${t("feedback.doctorMessages")}</h3>
         <div class="message-list">
           ${
             messages.length
@@ -810,14 +1394,14 @@ function renderPatientFeedback(patient) {
                   .map(
                     (message) => `
                       <div class="message-item">
-                        <strong>${message.direction === "doctor_to_patient" ? "Médecin" : "Patient"}</strong>
+                        <strong>${message.direction === "doctor_to_patient" ? t("message.doctor") : t("message.patient")}</strong>
                         <span>${escapeHtml(message.content)}</span>
                         <time>${formatDateTime(message.created_at)}</time>
                       </div>
                     `,
                   )
                   .join("")
-              : `<div class="message-item"><span class="muted">Aucun message récent.</span></div>`
+              : `<div class="message-item"><span class="muted">${t("feedback.noRecentMessage")}</span></div>`
           }
         </div>
       </div>
@@ -841,14 +1425,14 @@ function renderMessages() {
           const patient = state.patients.find((item) => item.id === message.patient_id);
           return `
             <div class="message-item">
-              <strong>${escapeHtml(patient ? `${patientFullName(patient)} · ${patient.code}` : "Patient")} · ${message.direction === "doctor_to_patient" ? "Médecin" : "Patient"}</strong>
+              <strong>${escapeHtml(patient ? `${patientFullName(patient)} · ${patient.code}` : t("message.patient"))} · ${message.direction === "doctor_to_patient" ? t("message.doctor") : t("message.patient")}</strong>
               <span>${escapeHtml(message.content)}</span>
               <time>${formatDateTime(message.created_at)}</time>
             </div>
           `;
         })
         .join("")
-    : `<div class="message-item"><span class="muted">Aucun message.</span></div>`;
+    : `<div class="message-item"><span class="muted">${t("message.none")}</span></div>`;
 }
 
 function patientMatchesSearch(patient, query) {
@@ -910,46 +1494,46 @@ function analyzePatient(patient) {
   let score = latest ? calculateBaseScore(latest) : 3;
 
   if (!latest) {
-    reasons.push("Aucun questionnaire quotidien enregistré.");
+    reasons.push(t("alerts.noQuestionnaire"));
   } else {
-    if (latest.blood) reasons.push("Sang dans les selles signalé.");
-    if (latest.fever) reasons.push("Fièvre signalée.");
-    if (latest.pain >= 7) reasons.push("Douleur abdominale élevée.");
-    if (latest.stools >= 8) reasons.push("Nombre de selles élevé.");
-    if (latest.fatigue >= 8) reasons.push("Fatigue importante.");
-    if (!latest.treatment_taken) reasons.push("Traitement non pris lors du dernier suivi.");
-    if (latest.side_effects) reasons.push(`Effets secondaires: ${latest.side_effects}`);
+    if (latest.blood) reasons.push(t("alerts.blood"));
+    if (latest.fever) reasons.push(t("alerts.fever"));
+    if (latest.pain >= 7) reasons.push(t("alerts.highPain"));
+    if (latest.stools >= 8) reasons.push(t("alerts.highStools"));
+    if (latest.fatigue >= 8) reasons.push(t("alerts.highFatigue"));
+    if (!latest.treatment_taken) reasons.push(t("alerts.missedTreatment"));
+    if (latest.side_effects) reasons.push(t("alerts.sideEffects", { value: latest.side_effects }));
 
     const staleDays = daysSince(latest.submitted_at);
     if (staleDays >= 2) {
       score += 2;
-      reasons.push("Questionnaire non rempli depuis plus de 48 h.");
+      reasons.push(t("alerts.stale"));
     }
   }
 
   if (adherence < 70) {
     score += 2;
-    reasons.push("Observance thérapeutique inférieure à 70%.");
+    reasons.push(t("alerts.lowAdherence"));
   }
 
   if (detectWorseningTrend(reports)) {
     score += 2;
-    reasons.push("Aggravation progressive sur plusieurs jours.");
+    reasons.push(t("alerts.worsening"));
   }
 
   score = Math.min(15, score);
 
   let status = "green";
-  let label = "Stable";
+  let label = t("status.green");
   if (score >= 8) {
     status = "red";
-    label = "Alerte";
+    label = t("status.red");
   } else if (score >= 4) {
     status = "orange";
-    label = "À surveiller";
+    label = t("status.orange");
   }
 
-  if (!reasons.length) reasons.push("Pas de signe d’aggravation détecté.");
+  if (!reasons.length) reasons.push(t("alerts.noWorsening"));
 
   return {
     status,
@@ -958,7 +1542,7 @@ function analyzePatient(patient) {
     adherence,
     reasons,
     symptoms: summarizeSymptoms(latest),
-    lastActivity: latest ? relativeTime(latest.submitted_at) : "jamais",
+    lastActivity: latest ? relativeTime(latest.submitted_at) : t("status.never"),
   };
 }
 
@@ -999,27 +1583,31 @@ function detectWorseningTrend(reports) {
 }
 
 function summarizeSymptoms(report) {
-  if (!report) return "Aucun symptôme récent";
-  const parts = [`${report.stools} selles`, `douleur ${report.pain}/10`, `fatigue ${report.fatigue}/10`];
-  if (report.blood) parts.push("sang");
-  if (report.fever) parts.push("fièvre");
+  if (!report) return t("detail.noRecentSymptoms");
+  const parts = [
+    t("symptoms.stools", { count: report.stools }),
+    t("symptoms.pain", { value: report.pain }),
+    t("symptoms.fatigue", { value: report.fatigue }),
+  ];
+  if (report.blood) parts.push(t("symptoms.blood"));
+  if (report.fever) parts.push(t("symptoms.fever"));
   return parts.join(" · ");
 }
 
 function patientFeedbackTitle(status) {
-  if (status === "red") return "Contactez votre médecin";
-  if (status === "orange") return "À surveiller";
-  return "Votre état est stable";
+  if (status === "red") return t("feedback.redTitle");
+  if (status === "orange") return t("feedback.orangeTitle");
+  return t("feedback.greenTitle");
 }
 
 function buildPatientNotifications(patient, analysis) {
   const notifications = [];
   const reports = getReports(patient.id);
   const latest = reports.at(-1);
-  if (!latest || daysSince(latest.submitted_at) >= 1) notifications.push("Rappel questionnaire quotidien.");
-  if (!latest?.treatment_taken) notifications.push("Rappel prise de traitement.");
-  if (analysis.status === "red") notifications.push("Message prioritaire: contact médical recommandé.");
-  if (!notifications.length) notifications.push("Aucune notification urgente.");
+  if (!latest || daysSince(latest.submitted_at) >= 1) notifications.push(t("notifications.questionnaire"));
+  if (!latest?.treatment_taken) notifications.push(t("notifications.treatment"));
+  if (analysis.status === "red") notifications.push(t("notifications.priority"));
+  if (!notifications.length) notifications.push(t("notifications.none"));
   return notifications;
 }
 
@@ -1037,7 +1625,7 @@ async function saveReport(report) {
       return;
     } catch (error) {
       console.error(error);
-      showToast("Échec Supabase, sauvegarde locale utilisée.");
+      showToast(t("toast.supabaseReportFailed"));
     }
   }
   state.reports.push(report);
@@ -1052,7 +1640,7 @@ async function saveMessage(message) {
       return;
     } catch (error) {
       console.error(error);
-      showToast("Échec Supabase, message gardé localement.");
+      showToast(t("toast.supabaseMessageFailed"));
     }
   }
   state.messages.push(message);
@@ -1067,7 +1655,7 @@ async function savePatient(patient) {
       return;
     } catch (error) {
       console.error(error);
-      showToast("Échec Supabase, patient gardé localement.");
+      showToast(t("toast.supabasePatientFailed"));
     }
   }
   state.patients.push(patient);
@@ -1105,7 +1693,7 @@ async function saveMedicalEvent(event) {
 async function loadRemoteData(options = {}) {
   if (!hasRemoteConfig()) return;
   try {
-    updateSyncState("Synchronisation...");
+    updateSyncState(t("sync.loading"));
     const [patients, reports, treatments, events, messages] = await Promise.all([
       fetchRemote("patients", "created_at.asc"),
       fetchRemote("daily_reports", "submitted_at.asc"),
@@ -1121,7 +1709,7 @@ async function loadRemoteData(options = {}) {
       messages: normalizeRows(messages),
     });
     if (!state.patients.length) {
-      showToast("Base distante connectée, mais aucune donnée trouvée.");
+      showToast(t("toast.remoteEmpty"));
     }
     selectedPatientId = selectedPatientId && state.patients.some((item) => item.id === selectedPatientId)
       ? selectedPatientId
@@ -1130,11 +1718,11 @@ async function loadRemoteData(options = {}) {
       ? patientSessionId
       : null;
     if (!options.skipRender) renderAll();
-    if (!options.quiet) showToast("Synchronisation Supabase terminée.");
+    if (!options.quiet) showToast(t("toast.remoteSynced"));
   } catch (error) {
     console.error(error);
-    updateSyncState("Connexion distante impossible");
-    showToast("Impossible de lire la base distante.");
+    updateSyncState(t("sync.failed"));
+    showToast(t("toast.remoteReadFailed"));
   }
 }
 
@@ -1178,29 +1766,29 @@ function hasRemoteConfig() {
 
 function updateSyncState(customText) {
   const dotClass = hasRemoteConfig() ? "green" : "neutral";
-  const text = customText || (hasRemoteConfig() ? "Base distante connectée" : "Mode démo local");
+  const text = customText || (hasRemoteConfig() ? t("sync.remote") : t("sync.local"));
   els.syncState.innerHTML = `<span class="status-dot ${dotClass}"></span><span>${escapeHtml(text)}</span>`;
 }
 
 function renderDatabase() {
   if (!els.dbStatus || !isDoctor()) return;
-  const urlText = dbConfig?.url ? maskUrl(dbConfig.url) : "Non configurée";
-  const keyText = dbConfig?.key ? `${dbConfig.key.slice(0, 8)}…${dbConfig.key.slice(-6)}` : "Non configurée";
+  const urlText = dbConfig?.url ? maskUrl(dbConfig.url) : t("database.notConfigured");
+  const keyText = dbConfig?.key ? `${dbConfig.key.slice(0, 8)}…${dbConfig.key.slice(-6)}` : t("database.notConfigured");
   els.dbStatus.innerHTML = `
     <div class="db-status-row">
-      <strong>Mode</strong>
-      <span>${hasRemoteConfig() ? "Supabase distant" : "Démo locale"}</span>
+      <strong>${t("database.mode")}</strong>
+      <span>${hasRemoteConfig() ? t("database.remoteMode") : t("database.localMode")}</span>
     </div>
     <div class="db-status-row">
-      <strong>Project URL</strong>
+      <strong>${t("database.projectUrl")}</strong>
       <span>${escapeHtml(urlText)}</span>
     </div>
     <div class="db-status-row">
-      <strong>Anon key</strong>
+      <strong>${t("database.anonKey")}</strong>
       <span>${escapeHtml(keyText)}</span>
     </div>
     <div class="timeline-item">
-      Modifie <strong>config.js</strong>, puis recharge la page pour changer la connexion. Le dashboard ne demande plus la clé.
+      ${t("database.configInstruction")}
     </div>
   `;
 }
@@ -1213,6 +1801,7 @@ function loadAppConfig() {
     supabaseAnonKey: raw.supabaseAnonKey || raw.SUPABASE_ANON_KEY || "",
     doctorEmail: doctor.email || raw.doctorEmail || "medecin@mici.local",
     doctorPassword: doctor.password || raw.doctorPassword || "demo1234",
+    showDemoHelpers: Boolean(raw.showDemoHelpers),
   };
 }
 
@@ -1490,20 +2079,22 @@ function hoursSince(value) {
 
 function relativeTime(value) {
   const hours = Math.max(0, Math.round(hoursSince(value)));
-  if (hours < 1) return "à l’instant";
-  if (hours < 24) return `il y a ${hours} h`;
+  if (hours < 1) return t("status.now");
+  if (hours < 24) return t("status.hoursAgo", { count: hours });
   const days = Math.floor(hours / 24);
-  return `il y a ${days} j`;
+  return t("status.daysAgo", { count: days });
 }
 
 function formatDate(value) {
   if (!value) return "";
-  return new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" }).format(new Date(value));
+  return new Intl.DateTimeFormat(currentLang === "ar" ? "ar-MA" : "fr-FR", { dateStyle: "medium" }).format(
+    new Date(value),
+  );
 }
 
 function formatDateTime(value) {
   if (!value) return "";
-  return new Intl.DateTimeFormat("fr-FR", {
+  return new Intl.DateTimeFormat(currentLang === "ar" ? "ar-MA" : "fr-FR", {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(value));
