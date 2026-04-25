@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plateforme MICI - Suivi des patients</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <section class="auth-shell" id="authShell" aria-label="Connexion">
+      <div class="auth-panel">
+        <div class="brand auth-brand">
+          <span class="brand-mark" aria-hidden="true">M</span>
+          <div>
+            <strong>MICI Suivi</strong>
+            <span>Accès sécurisé par rôle</span>
+          </div>
+        </div>
+        <div class="auth-grid">
+          <form class="panel auth-card" id="doctorLoginForm">
+            <div class="panel-header">
+              <div>
+                <h2>Connexion médecin</h2>
+                <p>Accès au dashboard, création des patients et messagerie.</p>
+              </div>
+            </div>
+            <div class="auth-form">
+              <label class="field">
+                <span>Email</span>
+                <input name="email" type="email" placeholder="email@cabinet.ma" autocomplete="username" required />
+              </label>
+              <label class="field">
+                <span>Mot de passe</span>
+                <input name="password" type="password" placeholder="••••••••" autocomplete="current-password" required />
+              </label>
+              <button class="primary-button" type="submit">Se connecter</button>
+            </div>
+          </form>
+
+          <form class="panel auth-card" id="patientLoginForm">
+            <div class="panel-header">
+              <div>
+                <h2>Connexion patient</h2>
+                <p>Accès limité au questionnaire, feedback et messages reçus.</p>
+              </div>
+            </div>
+            <div class="auth-form">
+              <label class="field">
+                <span>Code patient</span>
+                <input name="patientCode" placeholder="PAT-2048" autocomplete="one-time-code" required />
+              </label>
+              <button class="primary-button" type="submit">Entrer</button>
+              <div class="demo-codes" id="authDemoCodes"></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <div class="app-shell" id="appShell" hidden>
+      <aside class="sidebar" aria-label="Navigation principale">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">M</span>
+          <div>
+            <strong>MICI Suivi</strong>
+            <span>Plateforme clinique</span>
+          </div>
+        </div>
+        <nav class="nav-tabs">
+          <button class="nav-tab is-active" data-view="doctor" title="Espace médecin">
+            <span class="icon" aria-hidden="true">⌘</span>
+            <span>Médecin</span>
+          </button>
+          <button class="nav-tab" data-view="patient" title="Espace patient">
+            <span class="icon" aria-hidden="true">◉</span>
+            <span>Patient</span>
+          </button>
+          <button class="nav-tab" data-view="messages" title="Communication">
+            <span class="icon" aria-hidden="true">✉</span>
+            <span>Messages</span>
+          </button>
+          <button class="nav-tab" data-view="database" title="Base distante">
+            <span class="icon" aria-hidden="true">▣</span>
+            <span>Base distante</span>
+          </button>
+        </nav>
+        <div class="sync-state" id="syncState">
+          <span class="status-dot neutral"></span>
+          <span>Mode démo local</span>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow" id="sectionEyebrow">Dashboard médecin</p>
+            <h1 id="sectionTitle">Suivi intelligent des patients MICI</h1>
+          </div>
+          <div class="topbar-actions">
+            <button class="icon-button" id="refreshButton" title="Synchroniser">
+              <span aria-hidden="true">↻</span>
+            </button>
+            <button class="icon-button" id="seedButton" title="Réinitialiser la démo">
+              <span aria-hidden="true">◇</span>
+            </button>
+            <button class="icon-button" id="logoutButton" title="Déconnexion">
+              <span aria-hidden="true">⇥</span>
+            </button>
+          </div>
+        </header>
+
+        <section class="view is-visible" id="doctorView" aria-label="Espace médecin">
+          <div class="metric-grid" id="metricGrid"></div>
+          <section class="panel add-patient-panel">
+            <div class="panel-header">
+              <div>
+                <h2>Ajouter un patient</h2>
+                <p>Le code est unique et peut être généré automatiquement.</p>
+              </div>
+            </div>
+            <form class="add-patient-form" id="addPatientForm">
+              <div class="form-grid">
+                <label class="field">
+                  <span>Nom</span>
+                  <input name="last_name" placeholder="El Amrani" required />
+                </label>
+                <label class="field">
+                  <span>Prénom</span>
+                  <input name="first_name" placeholder="Sara" required />
+                </label>
+                <label class="field">
+                  <span>Téléphone</span>
+                  <input name="phone" placeholder="+212 600 000 000" inputmode="tel" required />
+                </label>
+                <label class="field">
+                  <span>Code patient</span>
+                  <div class="input-row">
+                    <input name="code" placeholder="PAT-1234" required />
+                    <button class="ghost-button" id="generateCodeButton" type="button">Générer</button>
+                  </div>
+                </label>
+                <label class="field">
+                  <span>Diagnostic</span>
+                  <select name="diagnosis">
+                    <option value="Crohn">Crohn</option>
+                    <option value="RCH">RCH</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Traitement en cours</span>
+                  <input name="current_treatment" placeholder="Biothérapie, CTC, mésalazine..." required />
+                </label>
+              </div>
+              <button class="primary-button" type="submit">Créer le patient</button>
+            </form>
+          </section>
+          <div class="doctor-grid">
+            <section class="panel patients-panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Patients</h2>
+                  <p>Priorisation automatique selon symptômes et observance.</p>
+                </div>
+                <div class="patient-tools">
+                  <label class="search-field">
+                    <span>Recherche</span>
+                    <input id="patientSearch" placeholder="Nom, prénom, code ou téléphone" />
+                  </label>
+                  <div class="segmented-control" role="tablist" aria-label="Filtre statut">
+                    <button class="segment is-active" data-filter="all">Tous</button>
+                    <button class="segment" data-filter="red">Alerte</button>
+                    <button class="segment" data-filter="orange">À surveiller</button>
+                    <button class="segment" data-filter="green">Stable</button>
+                  </div>
+                </div>
+              </div>
+              <div class="patient-table" id="patientTable"></div>
+              <div class="pagination-bar" id="patientPagination"></div>
+            </section>
+
+            <section class="panel detail-panel" id="patientDetail"></section>
+          </div>
+        </section>
+
+        <section class="view" id="patientView" aria-label="Espace patient">
+          <div class="patient-layout">
+            <section class="panel login-panel" id="patientLoginPanel">
+              <div class="panel-header">
+                <div>
+                  <h2>Connexion patient</h2>
+                  <p>Accès par code anonyme remis par le médecin.</p>
+                </div>
+              </div>
+              <form class="code-form" id="patientCodeForm">
+                <label for="patientCode">Code patient</label>
+                <div class="input-row">
+                  <input id="patientCode" name="patientCode" placeholder="PAT-2048" autocomplete="one-time-code" />
+                  <button class="primary-button" type="submit">Entrer</button>
+                </div>
+              </form>
+              <div class="demo-codes" id="demoCodes"></div>
+            </section>
+
+            <section class="panel questionnaire-panel" id="questionnairePanel" hidden>
+              <div class="panel-header">
+                <div>
+                  <h2>Questionnaire quotidien</h2>
+                  <p id="patientGreeting"></p>
+                </div>
+                <button class="ghost-button" id="patientLogout" type="button">Changer</button>
+              </div>
+              <form class="questionnaire" id="dailyForm">
+                <div class="form-grid">
+                  <label class="toggle-line">
+                    <input type="checkbox" name="treatment_taken" checked />
+                    <span>Traitement pris</span>
+                  </label>
+                  <label class="field">
+                    <span>Nombre de selles</span>
+                    <input type="number" name="stools" min="0" max="30" value="3" required />
+                  </label>
+                  <label class="toggle-line">
+                    <input type="checkbox" name="blood" />
+                    <span>Sang dans les selles</span>
+                  </label>
+                  <label class="toggle-line">
+                    <input type="checkbox" name="fever" />
+                    <span>Fièvre</span>
+                  </label>
+                  <label class="field">
+                    <span>Douleur abdominale</span>
+                    <input type="range" name="pain" min="0" max="10" value="2" />
+                    <strong class="range-value" data-range-for="pain">2</strong>
+                  </label>
+                  <label class="field">
+                    <span>Fatigue</span>
+                    <input type="range" name="fatigue" min="0" max="10" value="3" />
+                    <strong class="range-value" data-range-for="fatigue">3</strong>
+                  </label>
+                  <label class="field field-wide">
+                    <span>Effets secondaires</span>
+                    <textarea name="side_effects" rows="3" placeholder="Aucun, nausées, céphalées..."></textarea>
+                  </label>
+                  <label class="field">
+                    <span>État général</span>
+                    <select name="general_state">
+                      <option value="good">Bien</option>
+                      <option value="medium">Moyen</option>
+                      <option value="bad">Mauvais</option>
+                    </select>
+                  </label>
+                </div>
+                <button class="primary-button" type="submit">Envoyer le suivi</button>
+              </form>
+            </section>
+
+            <section class="panel feedback-panel" id="patientFeedback"></section>
+          </div>
+        </section>
+
+        <section class="view" id="messagesView" aria-label="Communication">
+          <div class="message-layout">
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Messagerie sécurisée</h2>
+                  <p>Convocation, conseil thérapeutique et suivi à distance.</p>
+                </div>
+              </div>
+              <form class="message-form" id="messageForm">
+                <label class="field">
+                  <span>Patient</span>
+                  <select name="patient_id" id="messagePatient"></select>
+                </label>
+                <label class="field field-wide">
+                  <span>Message médecin</span>
+                  <textarea name="content" rows="4" placeholder="Merci de contacter le cabinet aujourd’hui..."></textarea>
+                </label>
+                <button class="primary-button" type="submit">Envoyer</button>
+              </form>
+            </section>
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Historique</h2>
+                  <p>Messages médecin → patient et réponses enregistrées.</p>
+                </div>
+              </div>
+              <div class="message-list" id="messageList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="databaseView" aria-label="Base distante">
+          <div class="database-layout">
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Configuration Supabase</h2>
+                  <p>La connexion distante est lue depuis <strong>config.js</strong>, pas depuis le dashboard.</p>
+                </div>
+              </div>
+              <div class="db-status" id="dbStatus"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Modèle de données</h2>
+                  <p>Tables utilisées par le prototype et prêtes pour les règles RLS.</p>
+                </div>
+              </div>
+              <div class="schema-list">
+                <div><strong>patients</strong><span>nom, prénom, téléphone, code unique</span></div>
+                <div><strong>daily_reports</strong><span>questionnaire quotidien et score</span></div>
+                <div><strong>treatments</strong><span>historique thérapeutique</span></div>
+                <div><strong>medical_events</strong><span>timeline et décisions</span></div>
+                <div><strong>messages</strong><span>communication médecin-patient</span></div>
+              </div>
+              <a class="text-link" href="./database.sql">Ouvrir le script SQL Supabase</a>
+              <a class="text-link" href="./config.js">Ouvrir config.js</a>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./config.js"></script>
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>
