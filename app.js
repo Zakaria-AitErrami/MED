@@ -6,9 +6,26 @@ const PAGE_SIZE = 5;
 const appConfig = loadAppConfig();
 const I18N = {
   fr: {
-    "app.title": "Plateforme MICI - Suivi des patients",
-    "brand.authSubtitle": "Accès sécurisé par rôle",
+    "app.title": "MICI TRACK - Suivi des patients",
+    "brand.authSubtitle": "Connexion MICI TRACK",
     "brand.clinicalPlatform": "Plateforme clinique",
+    "home.eyebrow": "Smart Patient Monitoring",
+    "home.lede": "Suivez les patients au quotidien, détectez les risques plus tôt et donnez aux médecins une vue claire en temps réel de chaque cas.",
+    "home.doctorAccess": "Accès médecin",
+    "home.patientAccess": "Accès patient",
+    "home.trust1": "Suivi à distance",
+    "home.trust2": "Alertes intelligentes",
+    "home.trust3": "Français / عربي",
+    "home.aboutEyebrow": "Qui sommes-nous",
+    "home.aboutTitle": "Smart Patient Monitoring",
+    "home.aboutText": "Nous sommes une équipe qui améliore le suivi patient grâce à la technologie. Notre objectif est d’aider les médecins à gagner du temps et à prendre de meilleures décisions, tout en donnant aux patients un moyen simple de suivre leur santé au quotidien.",
+    "home.featureDoctorTitle": "Pour le médecin",
+    "home.featureDoctorText": "Dashboard, score clinique, recherche, pagination, création de patient et messagerie sécurisée.",
+    "home.featurePatientTitle": "Pour le patient",
+    "home.featurePatientText": "Connexion par code, questionnaire rapide, feedback immédiat et messages du médecin.",
+    "home.featureMoroccoTitle": "Ancré au Maroc",
+    "home.featureMoroccoText": "Interface bilingue français/arabe et expérience adaptée aux cabinets et patients locaux.",
+    "home.backHome": "Retour à l’accueil",
     "auth.doctorTitle": "Connexion médecin",
     "auth.doctorSubtitle": "Accès au dashboard, création des patients et messagerie.",
     "auth.patientTitle": "Connexion patient",
@@ -193,9 +210,26 @@ const I18N = {
     "treatment.initialNote": "Traitement initial saisi à la création du patient."
   },
   ar: {
-    "app.title": "منصة تتبع مرضى الأمعاء الالتهابية",
-    "brand.authSubtitle": "دخول آمن حسب الدور",
+    "app.title": "MICI TRACK - منصة تتبع مرضى الأمعاء الالتهابية",
+    "brand.authSubtitle": "دخول MICI TRACK",
     "brand.clinicalPlatform": "منصة سريرية",
+    "home.eyebrow": "Smart Patient Monitoring",
+    "home.lede": "تتبع حالة المرضى يوميا، اكتشف المخاطر مبكرا وامنح الطبيب رؤية واضحة وفورية لكل حالة.",
+    "home.doctorAccess": "دخول الطبيب",
+    "home.patientAccess": "دخول المريض",
+    "home.trust1": "تتبع عن بعد",
+    "home.trust2": "تنبيهات ذكية",
+    "home.trust3": "Français / عربي",
+    "home.aboutEyebrow": "من نحن",
+    "home.aboutTitle": "Smart Patient Monitoring",
+    "home.aboutText": "نحن فريق يعمل على تحسين تتبع المرضى عبر التكنولوجيا. هدفنا مساعدة الأطباء على ربح الوقت واتخاذ قرارات أفضل، مع منح المرضى طريقة سهلة لتتبع صحتهم يوميا.",
+    "home.featureDoctorTitle": "للطبيب",
+    "home.featureDoctorText": "لوحة متابعة، نتيجة سريرية، بحث، صفحات، إضافة المرضى ورسائل آمنة.",
+    "home.featurePatientTitle": "للمريض",
+    "home.featurePatientText": "دخول بالرمز، استبيان سريع، نتيجة فورية ورسائل الطبيب.",
+    "home.featureMoroccoTitle": "بروح مغربية",
+    "home.featureMoroccoText": "واجهة ثنائية اللغة فرنسية/عربية وتجربة مناسبة للعيادات والمرضى محليا.",
+    "home.backHome": "العودة إلى الصفحة الرئيسية",
     "auth.doctorTitle": "دخول الطبيب",
     "auth.doctorSubtitle": "الوصول إلى لوحة المتابعة، إضافة المرضى والرسائل.",
     "auth.patientTitle": "دخول المريض",
@@ -414,10 +448,19 @@ let patientSearch = "";
 let patientPage = 1;
 let session = loadSession();
 let dbConfig = loadDbConfig();
+let showAuth = false;
+let activeAuthRole = "doctor";
+let heroAnimationId = null;
 
 const els = {
+  homeShell: document.querySelector("#homeShell"),
+  homeHeroCanvas: document.querySelector("#homeHeroCanvas"),
+  homeDoctorButton: document.querySelector("#homeDoctorButton"),
+  homePatientButton: document.querySelector("#homePatientButton"),
+  backHomeButton: document.querySelector("#backHomeButton"),
   authShell: document.querySelector("#authShell"),
   appShell: document.querySelector("#appShell"),
+  authGrid: document.querySelector("#authGrid"),
   doctorLoginForm: document.querySelector("#doctorLoginForm"),
   patientLoginForm: document.querySelector("#patientLoginForm"),
   authDemoCodes: document.querySelector("#authDemoCodes"),
@@ -455,6 +498,7 @@ init();
 
 function init() {
   bindLanguage();
+  bindHome();
   bindAuth();
   bindNavigation();
   bindFilters();
@@ -466,6 +510,112 @@ function init() {
   renderAll();
   if (hasRemoteConfig()) {
     loadRemoteData();
+  }
+}
+
+function bindHome() {
+  els.homeDoctorButton.addEventListener("click", () => {
+    showAuth = true;
+    activeAuthRole = "doctor";
+    renderAll();
+    els.doctorLoginForm.elements.email.focus();
+  });
+
+  els.homePatientButton.addEventListener("click", () => {
+    showAuth = true;
+    activeAuthRole = "patient";
+    renderAll();
+    els.patientLoginForm.elements.patientCode.focus();
+  });
+
+  els.backHomeButton.addEventListener("click", () => {
+    showAuth = false;
+    renderAll();
+  });
+
+  window.addEventListener("resize", () => drawHeroScene(performance.now()));
+  startHeroScene();
+}
+
+function startHeroScene() {
+  const animate = (time) => {
+    drawHeroScene(time);
+    heroAnimationId = requestAnimationFrame(animate);
+  };
+  if (!heroAnimationId) heroAnimationId = requestAnimationFrame(animate);
+}
+
+function drawHeroScene(time = 0) {
+  const canvas = els.homeHeroCanvas;
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const ratio = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  const width = Math.max(1, rect.width);
+  const height = Math.max(1, rect.height);
+  canvas.width = width * ratio;
+  canvas.height = height * ratio;
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  ctx.clearRect(0, 0, width, height);
+  ctx.fillStyle = "#f8fbfd";
+  ctx.fillRect(0, 0, width, height);
+
+  const drift = Math.sin(time / 1800) * 18;
+  const baseX = currentLang === "ar" ? width * 0.18 : width * 0.72;
+  const points = [
+    [baseX, height * 0.1],
+    [baseX + 90, height * 0.22],
+    [baseX - 110 + drift, height * 0.38],
+    [baseX + 70, height * 0.55],
+    [baseX - 70, height * 0.72],
+    [baseX + 30, height * 0.88],
+  ];
+
+  ctx.lineWidth = Math.max(28, width * 0.032);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.strokeStyle = "rgba(15, 139, 141, 0.12)";
+  ctx.beginPath();
+  ctx.moveTo(points[0][0], points[0][1]);
+  for (let index = 1; index < points.length; index += 1) {
+    const [x, y] = points[index];
+    const [px, py] = points[index - 1];
+    ctx.quadraticCurveTo(px + (x - px) * 0.65, py + (y - py) * 0.18, x, y);
+  }
+  ctx.stroke();
+
+  ctx.lineWidth = Math.max(5, width * 0.006);
+  ctx.strokeStyle = "rgba(15, 139, 141, 0.42)";
+  ctx.stroke();
+
+  const pulse = (Math.sin(time / 420) + 1) / 2;
+  const nodes = [
+    [width * 0.18, height * 0.24, "#c1272d"],
+    [width * 0.28, height * 0.6, "#006233"],
+    [width * 0.82, height * 0.36, "#0f8b8d"],
+    [width * 0.75, height * 0.76, "#3f6fb5"],
+  ];
+  nodes.forEach(([x, y, color], index) => {
+    const radius = 5 + pulse * 4 + index;
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.18;
+    ctx.beginPath();
+    ctx.arc(x, y, radius * 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 0.75;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  });
+
+  ctx.strokeStyle = "rgba(24, 33, 47, 0.07)";
+  ctx.lineWidth = 1;
+  for (let x = 0; x < width; x += 58) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x + width * 0.08, height);
+    ctx.stroke();
   }
 }
 
@@ -522,6 +672,7 @@ function bindAuth() {
       return;
     }
     session = { role: "doctor", signedInAt: new Date().toISOString() };
+    showAuth = false;
     saveSession();
     activeView = "doctor";
     await ensureRemoteLoaded();
@@ -540,6 +691,7 @@ function bindAuth() {
       return;
     }
     session = { role: "patient", patientId: patient.id, signedInAt: new Date().toISOString() };
+    showAuth = false;
     patientSessionId = patient.id;
     selectedPatientId = patient.id;
     saveSession();
@@ -655,6 +807,7 @@ function bindPatientSpace() {
     patientSessionId = patient.id;
     selectedPatientId = patient.id;
     session = { role: "patient", patientId: patient.id, signedInAt: new Date().toISOString() };
+    showAuth = false;
     saveSession();
     activeView = "patient";
     showToast(t("toast.patientConnected"));
@@ -789,8 +942,12 @@ function renderAll() {
 
 function applyAccessState() {
   const authenticated = Boolean(session?.role);
-  els.authShell.hidden = authenticated;
+  els.homeShell.hidden = authenticated || showAuth;
+  els.authShell.hidden = authenticated || !showAuth;
   els.appShell.hidden = !authenticated;
+  els.doctorLoginForm.hidden = activeAuthRole !== "doctor";
+  els.patientLoginForm.hidden = activeAuthRole !== "patient";
+  els.authGrid.classList.add("is-single");
   els.refreshButton.hidden = !isDoctor();
   els.seedButton.hidden = !isDoctor();
 
@@ -851,6 +1008,7 @@ function logout() {
   patientSessionId = null;
   sessionStorage.removeItem(SESSION_KEY);
   activeView = "doctor";
+  showAuth = false;
   renderAll();
   showToast(t("toast.logout"));
 }

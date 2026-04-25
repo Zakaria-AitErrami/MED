@@ -3,24 +3,103 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Plateforme MICI - Suivi des patients</title>
+    <title>MICI TRACK - Suivi des patients</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <section class="auth-shell" id="authShell" aria-label="Connexion">
+    <section class="home-shell" id="homeShell" aria-label="Accueil">
+      <div class="home-hero">
+        <canvas id="homeHeroCanvas" aria-hidden="true"></canvas>
+        <header class="home-nav">
+          <a class="home-brand" href="#homeAbout" aria-label="MICI TRACK">
+            <span class="product-mark small" aria-hidden="true">
+              <svg viewBox="0 0 64 64" role="img">
+                <path d="M35 8c11 2 18 10 18 20 0 7-4 12-10 14-4 2-6 4-6 8 0 5-4 8-9 8-7 0-12-5-12-12 0-5 2-9 7-12 4-3 7-4 7-8 0-3-2-5-6-6" />
+                <path d="M26 18c-7 2-12 8-12 16 0 11 8 20 19 21" />
+              </svg>
+            </span>
+            <span>MICI TRACK</span>
+          </a>
+          <div class="language-switcher" aria-label="Language">
+            <button class="language-button" type="button" data-lang="fr">FR</button>
+            <button class="language-button" type="button" data-lang="ar">AR</button>
+          </div>
+        </header>
+
+        <div class="home-hero-content">
+          <div class="product-lockup">
+            <span class="product-mark" aria-hidden="true">
+              <svg viewBox="0 0 64 64" role="img">
+                <path d="M35 8c11 2 18 10 18 20 0 7-4 12-10 14-4 2-6 4-6 8 0 5-4 8-9 8-7 0-12-5-12-12 0-5 2-9 7-12 4-3 7-4 7-8 0-3-2-5-6-6" />
+                <path d="M26 18c-7 2-12 8-12 16 0 11 8 20 19 21" />
+              </svg>
+            </span>
+            <span class="morocco-flag" aria-label="Morocco">
+              <span class="morocco-star" aria-hidden="true">★</span>
+            </span>
+          </div>
+          <p class="eyebrow" data-i18n="home.eyebrow">Produit marocain pour le suivi MICI</p>
+          <h1>MICI TRACK</h1>
+          <p class="home-lede" data-i18n="home.lede">
+            Suivez les patients au quotidien, détectez les risques plus tôt et donnez aux médecins une vue claire en temps réel de chaque cas.
+          </p>
+          <div class="home-actions">
+            <button class="primary-button" type="button" id="homeDoctorButton" data-i18n="home.doctorAccess">Accès médecin</button>
+            <button class="ghost-button" type="button" id="homePatientButton" data-i18n="home.patientAccess">Accès patient</button>
+          </div>
+          <div class="home-trust">
+            <span data-i18n="home.trust1">Suivi à distance</span>
+            <span data-i18n="home.trust2">Alertes intelligentes</span>
+            <span data-i18n="home.trust3">Français / عربي</span>
+          </div>
+        </div>
+      </div>
+
+      <section class="home-about" id="homeAbout">
+        <div class="home-section-head">
+          <p class="eyebrow" data-i18n="home.aboutEyebrow">Qui sommes-nous</p>
+          <h2 data-i18n="home.aboutTitle">Smart Patient Monitoring</h2>
+          <p data-i18n="home.aboutText">
+            Nous sommes une équipe qui améliore le suivi patient grâce à la technologie, pour aider les médecins à gagner du temps et les patients à suivre leur santé au quotidien.
+          </p>
+        </div>
+        <div class="home-feature-grid">
+          <article class="home-feature">
+            <strong data-i18n="home.featureDoctorTitle">Pour le médecin</strong>
+            <p data-i18n="home.featureDoctorText">Dashboard, score clinique, recherche, pagination, création de patient et messagerie sécurisée.</p>
+          </article>
+          <article class="home-feature">
+            <strong data-i18n="home.featurePatientTitle">Pour le patient</strong>
+            <p data-i18n="home.featurePatientText">Connexion par code, questionnaire rapide, feedback immédiat et messages du médecin.</p>
+          </article>
+          <article class="home-feature">
+            <strong data-i18n="home.featureMoroccoTitle">Ancré au Maroc</strong>
+            <p data-i18n="home.featureMoroccoText">Interface bilingue français/arabe et expérience adaptée aux cabinets et patients locaux.</p>
+          </article>
+        </div>
+      </section>
+    </section>
+
+    <section class="auth-shell" id="authShell" aria-label="Connexion" hidden>
       <div class="auth-panel">
         <div class="brand auth-brand">
-          <span class="brand-mark" aria-hidden="true">M</span>
+          <span class="product-mark small" aria-hidden="true">
+            <svg viewBox="0 0 64 64" role="img">
+              <path d="M35 8c11 2 18 10 18 20 0 7-4 12-10 14-4 2-6 4-6 8 0 5-4 8-9 8-7 0-12-5-12-12 0-5 2-9 7-12 4-3 7-4 7-8 0-3-2-5-6-6" />
+              <path d="M26 18c-7 2-12 8-12 16 0 11 8 20 19 21" />
+            </svg>
+          </span>
           <div>
-            <strong>MICI Suivi</strong>
-            <span data-i18n="brand.authSubtitle">Accès sécurisé par rôle</span>
+            <strong>MICI TRACK</strong>
+            <span data-i18n="brand.authSubtitle">Connexion MICI TRACK</span>
           </div>
         </div>
         <div class="language-switcher" aria-label="Language">
           <button class="language-button" type="button" data-lang="fr">FR</button>
           <button class="language-button" type="button" data-lang="ar">AR</button>
         </div>
-        <div class="auth-grid">
+        <button class="text-button" id="backHomeButton" type="button" data-i18n="home.backHome">Retour à l’accueil</button>
+        <div class="auth-grid" id="authGrid">
           <form class="panel auth-card" id="doctorLoginForm">
             <div class="panel-header">
               <div>
@@ -64,9 +143,14 @@
     <div class="app-shell" id="appShell" hidden>
       <aside class="sidebar" aria-label="Navigation principale">
         <div class="brand">
-          <span class="brand-mark" aria-hidden="true">M</span>
+          <span class="product-mark small" aria-hidden="true">
+            <svg viewBox="0 0 64 64" role="img">
+              <path d="M35 8c11 2 18 10 18 20 0 7-4 12-10 14-4 2-6 4-6 8 0 5-4 8-9 8-7 0-12-5-12-12 0-5 2-9 7-12 4-3 7-4 7-8 0-3-2-5-6-6" />
+              <path d="M26 18c-7 2-12 8-12 16 0 11 8 20 19 21" />
+            </svg>
+          </span>
           <div>
-            <strong>MICI Suivi</strong>
+            <strong>MICI TRACK</strong>
             <span data-i18n="brand.clinicalPlatform">Plateforme clinique</span>
           </div>
         </div>

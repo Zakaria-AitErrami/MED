@@ -1,7 +1,8 @@
-# Plateforme MICI - Suivi intelligent des patients
+# MICI TRACK - Suivi intelligent des patients
 
-Prototype web pour le suivi à distance des patients MICI (Crohn et RCH), avec:
+Prototype web marocain pour le suivi à distance des patients MICI (Crohn et RCH), avec:
 
+- page d’accueil visiteur avec identité MICI TRACK;
 - dashboard médecin avec priorisation vert / orange / rouge;
 - connexion médecin par email / mot de passe de démonstration;
 - interface bilingue français / arabe avec affichage RTL en arabe;
