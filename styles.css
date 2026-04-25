@@ -39,6 +39,13 @@ body {
   letter-spacing: 0;
 }
 
+html[dir="rtl"] body {
+  direction: rtl;
+  font-family:
+    "Noto Sans Arabic", Tahoma, Arial, ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
 button,
 input,
 select,
@@ -64,6 +71,36 @@ button {
 .auth-brand {
   margin-bottom: 18px;
   color: var(--ink);
+}
+
+.language-switcher {
+  display: inline-flex;
+  gap: 3px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #eef3f8;
+  padding: 3px;
+  margin-bottom: 14px;
+}
+
+.language-switcher.compact {
+  margin-bottom: 0;
+}
+
+.language-button {
+  min-width: 42px;
+  min-height: 34px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.language-button.is-active {
+  background: #ffffff;
+  color: var(--ink);
+  box-shadow: 0 5px 12px rgba(24, 33, 47, 0.08);
 }
 
 .auth-brand > div span {
@@ -437,6 +474,11 @@ p {
   text-align: left;
 }
 
+html[dir="rtl"] .patient-row,
+html[dir="rtl"] .nav-tab {
+  text-align: right;
+}
+
 .patient-row + .patient-row {
   margin-top: 4px;
 }
@@ -615,8 +657,17 @@ canvas {
   border-left: 4px solid var(--red);
 }
 
+html[dir="rtl"] .alert-item {
+  border-right: 4px solid var(--red);
+  border-left: 1px solid var(--line);
+}
+
 .alert-item.orange {
   border-left-color: var(--amber);
+}
+
+html[dir="rtl"] .alert-item.orange {
+  border-right-color: var(--amber);
 }
 
 .patient-layout,

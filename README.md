@@ -4,6 +4,7 @@ Prototype web pour le suivi à distance des patients MICI (Crohn et RCH), avec:
 
 - dashboard médecin avec priorisation vert / orange / rouge;
 - connexion médecin par email / mot de passe de démonstration;
+- interface bilingue français / arabe avec affichage RTL en arabe;
 - création de patient avec nom, prénom, téléphone et code unique générable;
 - recherche par nom, prénom, code ou téléphone avec pagination;
 - fiche patient avec courbes, score clinique, traitements et timeline;
@@ -86,6 +87,7 @@ node scripts/create-config.mjs
 Cela génère `config.js` au moment du build. Tu n’as donc pas besoin de saisir l’URL Supabase ou la clé dans le dashboard.
 
 6. Test rapide après déploiement:
+   - bascule FR/AR sur l’écran de connexion;
    - connexion médecin avec l’email/mot de passe définis;
    - ajout d’un patient avec code généré;
    - recherche par nom, téléphone ou code;
